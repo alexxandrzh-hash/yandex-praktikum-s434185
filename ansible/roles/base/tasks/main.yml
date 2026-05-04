@@ -1,0 +1,42 @@
+---
+- name: Установка имени хоста
+  hostname:
+    name: "{{ hostname }}"
+  register: hostname_result
+
+- name: Обновление /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    regexp: '^127\.0\.1\.1'
+    line: "127.0.1.1 {{ hostname }}"
+  when: hostname_result.changed
+
+- name: Обновление кэша пакетов
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Установка стандартных пакетов
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - net-tools
+      - dnsutils
+      - wget
+      - curl
+      - mc
+      - rsync
+      - htop
+      - vim
+      - git
+
+- name: Проверка установленных пакетов
+  shell: dpkg -l | grep -E "net-tools|dnsutils|wget|curl|mc|rsync"
+  register: installed_packages
+  changed_when: false
+
+- name: Вывод установленных пакетов
+  debug:
+    msg: "{{ installed_packages.stdout_lines }}"

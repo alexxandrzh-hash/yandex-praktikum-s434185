@@ -1,0 +1,30 @@
+---
+- name: Базовая настройка всех серверов
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Проверка доступности
+      ping:
+
+    - name: Вывод информации о системе
+      debug:
+        msg: |
+          Хост: {{ inventory_hostname }}
+          IP: {{ ansible_host }}
+          ОС: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          Память: {{ ansible_memtotal_mb }} MB
+
+- name: Установка базовых пакетов и настройка
+  hosts: all
+  roles:
+    - base
+
+- name: Настройка Nginx Backend серверов
+  hosts: backends
+  roles:
+    - nginx-backend
+
+- name: Настройка Nginx Proxy сервера
+  hosts: proxy
+  roles:
+    - nginx-proxy

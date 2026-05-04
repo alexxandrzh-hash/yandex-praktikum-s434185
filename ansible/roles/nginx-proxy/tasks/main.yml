@@ -1,0 +1,44 @@
+---
+- name: Установка Nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Создание конфигурации прокси
+  template:
+    src: nginx-proxy.conf.j2
+    dest: /etc/nginx/sites-available/proxy
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart nginx
+
+- name: Активация конфигурации прокси
+  file:
+    src: /etc/nginx/sites-available/proxy
+    dest: /etc/nginx/sites-enabled/proxy
+    state: link
+  notify: restart nginx
+
+- name: Удаление конфигурации по умолчанию
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+
+- name: Проверка конфигурации Nginx
+  shell: nginx -t
+  register: nginx_config_test
+  changed_when: false
+  ignore_errors: yes
+
+- name: Вывод результата проверки
+  debug:
+    msg: "{{ nginx_config_test.stderr }}"
+  when: nginx_config_test.rc == 0
+
+- name: Убеждаемся, что Nginx запущен
+  service:
+    name: nginx
+    state: started
+    enabled: yes

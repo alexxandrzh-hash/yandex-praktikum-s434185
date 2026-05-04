@@ -1,0 +1,6 @@
+*.tfstate
+*.tfstate.*
+.terraform/
+*.retry
+*.log
+.DS_Store

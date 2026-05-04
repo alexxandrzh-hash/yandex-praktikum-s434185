@@ -1,0 +1,25 @@
+---
+- name: Установка Nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Создание кастомной страницы
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+  notify: restart nginx
+
+- name: Удаление дефолтной страницы
+  file:
+    path: /var/www/html/index.nginx-debian.html
+    state: absent
+
+- name: Убеждаемся, что Nginx запущен
+  service:
+    name: nginx
+    state: started
+    enabled: yes

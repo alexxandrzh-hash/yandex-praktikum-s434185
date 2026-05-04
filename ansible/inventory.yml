@@ -1,0 +1,21 @@
+all:
+  children:
+    proxy:
+      hosts:
+        vm-proxy:
+          ansible_host: 2.26.106.29
+          ansible_user: root
+          hostname: proxy-server
+    backends:
+      hosts:
+        vm-backend-1:
+          ansible_host: 2.27.37.132
+          ansible_user: root
+          hostname: backend-1
+        vm-backend-2:
+          ansible_host: 2.27.37.134
+          ansible_user: root
+          hostname: backend-2
+  vars:
+    ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+    ansible_python_interpreter: /usr/bin/python3
