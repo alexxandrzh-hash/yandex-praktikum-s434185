@@ -1,6 +1,14 @@
+
+Terraform
 *.tfstate
-*.tfstate.*
+.tfstate.
 .terraform/
+*.tfvars
+
+Ansible
 *.retry
-*.log
+
+Системные файлы
 .DS_Store
+*.log
+*.swp
